@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "rho_plus"
+version = "0.1.2"
+description = "Aesthetic and ergonomic enhancements to common Python data science tools"
+authors = ["Nicholas Miklaucic <nicholas.miklaucic@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+
+[tool.poetry.dev-dependencies]
+numpy = "^1.22.4"
+matplotlib = "^3.5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
