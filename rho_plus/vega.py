@@ -16,12 +16,7 @@ def rho(is_dark: bool):
         return {
             "config": {
                 "background": empty,
-                "view": {
-                    "height": 600,
-                    "width": 800,
-                    "stroke": "transparent",
-                    "autosize": "fit",
-                },
+                "view": {"stroke": "transparent", "autosize": "fit",},
                 "axis": {
                     "domain": False,
                     "grid": False,
