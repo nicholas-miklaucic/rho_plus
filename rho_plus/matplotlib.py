@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 
 rho = {
     # text sizes
+    "font.size": 12,
     "axes.labelsize": "large",
     "axes.titlesize": "x-large",
     "figure.titlesize": "xx-large",

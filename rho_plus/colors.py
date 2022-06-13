@@ -46,7 +46,7 @@ LIGHT_SHADES = [
     # empty shade: primary background
     "#FFFFFF",
     # lightest shade: secondary background
-    "#F0F4FB",
+    "#F1F4FA",
     # light shade: borders and dividers
     "#D3DAE6",
     # medium shade: subdued text
