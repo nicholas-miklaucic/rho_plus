@@ -48,7 +48,7 @@ rho_light["axes.prop_cycle"] = mpl.cycler(
     color=[x[1:] for x in LIGHT_COLORS]
 )
 
-rho_light["axes.prop_cycle"] = mpl.cycler(
+rho_dark["axes.prop_cycle"] = mpl.cycler(
     # remove # from color beginning
     color=[x[1:] for x in DARK_COLORS]
 )
