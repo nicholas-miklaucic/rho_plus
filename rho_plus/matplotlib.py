@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Matplotlib themes as dictionaries."""
 
-from typing import List
+from typing import List, Tuple
 from .colors import LIGHT_COLORS, DARK_COLORS, LIGHT_SHADES, DARK_SHADES
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -56,25 +56,28 @@ rho_light["axes.prop_cycle"] = mpl.cycler(
 
 for rc, shades in [(rho_light, LIGHT_SHADES), (rho_dark, DARK_SHADES)]:
     empty, lightest, light, medium, dark, darkest = shades
-    rc["axes.facecolor"] = empty
-    rc["figure.facecolor"] = empty
-    rc["savefig.facecolor"] = empty
+    rc["figure.facecolor"] = lightest
+    rc["savefig.facecolor"] = lightest
+    rc["axes.facecolor"] = lightest
 
     rc["axes.edgecolor"] = light
     rc["figure.edgecolor"] = light
     rc["savefig.edgecolor"] = light
+    rc["legend.edgecolor"] = light
 
     rc["xtick.color"] = medium
     rc["ytick.color"] = medium
 
     rc["xtick.labelcolor"] = dark
     rc["ytick.labelcolor"] = dark
+    rc["legend.labelcolor"] = dark
 
+    rc["text.color"] = darkest
     rc["axes.labelcolor"] = darkest
     rc["axes.titlecolor"] = darkest
 
 
-def setup(is_dark: bool) -> List[str]:
-    """Sets up Matplotlib according to the given color scheme. Returns a list of the plot colors."""
-    plt.style.use(rho_dark if is_dark else rho_light)
-    return plt.rcParams["axes.prop_cycle"].by_key()["color"]
+def setup(is_dark: bool) -> Tuple[dict, List[str]]:
+    """Sets up Matplotlib according to the given color scheme. Returns the theme and colors as a tuple."""
+    theme = rho_dark if is_dark else rho_light
+    return (theme, [x["color"] for x in theme["axes.prop_cycle"]])

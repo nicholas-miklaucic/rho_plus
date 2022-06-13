@@ -18,7 +18,8 @@ A custom Matplotlib theme that can be set to either light or dark mode.
 import rho_plus
 
 IS_DARK = True
-cs = rho_plus.mpl_setup(IS_DARK)
+theme, cs = rho_plus.mpl_setup(IS_DARK)
+plt.style.use(theme)
 ```
 
 Now `cs` is a list of the default plot color cycle, and Matplotlib has been set up to use a dark theme.
