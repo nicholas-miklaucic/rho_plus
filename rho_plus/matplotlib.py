@@ -37,6 +37,8 @@ rho = {
     "axes.spines.top": "false",
     # set default figure size to a bit more than 6.4 x 4.8
     "figure.figsize": (8, 6),
+    # slightly thicker lines by default are easier to see
+    "lines.linewidth": 3,
 }
 
 
@@ -55,12 +57,13 @@ rho_dark["axes.prop_cycle"] = mpl.cycler(
 
 
 for rc, shades in [(rho_light, LIGHT_SHADES), (rho_dark, DARK_SHADES)]:
-    empty, lightest, light, medium, dark, darkest = shades
-    rc["figure.facecolor"] = lightest
-    rc["savefig.facecolor"] = lightest
-    rc["axes.facecolor"] = lightest
+    empty, lightest, light, medium, dark, darkest = [x[1:] for x in shades]
+    rc["figure.facecolor"] = empty
+    rc["savefig.facecolor"] = empty
+    rc["axes.facecolor"] = empty
 
     rc["axes.edgecolor"] = light
+    rc["grid.color"] = light
     rc["figure.edgecolor"] = light
     rc["savefig.edgecolor"] = light
     rc["legend.edgecolor"] = light

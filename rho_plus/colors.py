@@ -1,43 +1,36 @@
 #!/usr/bin/env python3
 """Colors used across themes."""
-# colors from https://blueprintjs.com/docs/#core/colors
-
-# intended to approximate the standard ordering found in cat10 or similar. For
-# my purposes, it's rare that you're using all of them and that you need maximum
-# visual clarity. What's more common is using a couple colors or using them
-# redundantly. If you want maximum discernability, use Glasbey from colorcet.
-
-# An example of this tradeoff: blue and orange are the easiest pair to tell
-# apart, which is why you see them in Rocket League or Splatoon or similar games
-# with teams. But blue and green look much nicer as the only two colors in a
-# plot, and they're still discernible with most forms of colorblindness. So blue
-# and green are the first pair, and then orange is the third color.
 
 LIGHT_COLORS = [
-    "#215DB0",
-    "#1C6E42",
-    "#935610",
-    "#B83211",
-    "#7C327C",
-    "#0F6894",
-    "#634DBF",
-    "#5A701A",
-    "#C22762",
-    "#866103",
+    "#2005ff",
+    "#009917",
+    "#d56200",
+    "#ff2635",
+    "#c146ff",
+    "#5b00b3",
+    "#5879ff",
+    "#009489",
+    "#004367",
+    "#00461e",
+    "#900004",
+    "#682800",
 ]
 
 DARK_COLORS = [
-    "#4C90F0",
-    "#32A467",
-    "#EC9A3C",
-    "#EB6847",
-    "#BD6BBD",
-    "#3FA6DA",
-    "#9881F3",
-    "#B6D94C",
-    "#F5498B",
-    "#F0B726",
+    "#7075ff",
+    "#00e614",
+    "#ff963d",
+    "#ff6e81",
+    "#d06fe7",
+    "#8a50ff",
+    "#adc6ff",
+    "#00decf",
+    "#00a6f6",
+    "#008a33",
+    "#ef000c",
+    "#d34700",
 ]
+
 
 # the neutrals are from https://elastic.github.io/eui/#/theming/colors
 # the naming is from a light-scheme perspective
