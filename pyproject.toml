@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rho_plus"
-version = "0.2.0"
+version = "0.2.1"
 description = "Aesthetic and ergonomic enhancements to common Python data science tools"
 authors = ["Nicholas Miklaucic <nicholas.miklaucic@gmail.com>"]
 license = "MIT"
