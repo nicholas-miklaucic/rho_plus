@@ -35,14 +35,14 @@ Here's a showcase of what all of the Matplotlib tools in Rho+ do. For code, chec
 
 Default Matplotlib:
 
-![images/default.png]
+![Default](images/default.png)
 
 Rho+, with light mode:
 
-![images/rho-light.png]
+![Light mode](images/rho-light.png)
 
 Rho+, with dark mode:
 
-![images/rho-dark.png]
+![Dark mode](images/rho-dark.png)
 
 If things don't work as you expect or you have ideas for improvements, please consider filing a pull request!
