@@ -1,1 +1,2 @@
 nbsphinx
+insipid-sphinx-theme
