@@ -1,16 +1,20 @@
 [tool.poetry]
 name = "rho_plus"
-version = "0.2.1"
+version = "0.3.0"
 description = "Aesthetic and ergonomic enhancements to common Python data science tools"
 authors = ["Nicholas Miklaucic <nicholas.miklaucic@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.7, <3.11"
+python = "^3.8, <3.11"
+scipy = ">=1.7.0"
+
+[tool.poetry.dev-dependencies]
 matplotlib = "^3"
 scipy = ">=1.7.0"
 numpy = "^1.21"
-colour-science = "0.3.16"
+colour-science = "^0.4"
+seaborn = "^0.11"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

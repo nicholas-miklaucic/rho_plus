@@ -8,3 +8,9 @@ tmp/
 build
 htmlcov
 dist/
+
+# Sphinx docs
+docs/build/
+
+# Jupyter
+.ipynb_checkpoints/

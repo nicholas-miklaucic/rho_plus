@@ -1,4 +1,7 @@
 from .matplotlib import setup as mpl_setup
+from .matplotlib import boxstyle as boxstyle
+from .matplotlib import unfill_boxplot as unfill_boxplot
+from .matplotlib_tweaks import smart_ticks, line_labels, ylabel_top
 
 try:
     import altair
