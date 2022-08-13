@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import rho_plus as rho
 from pathlib import Path
+import numpy as np
 
 
 def test_plot(use_rho=False, is_dark=False):
