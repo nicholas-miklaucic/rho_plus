@@ -124,6 +124,7 @@ def unfill_boxplot(ax=None) -> None:
 def setup(is_dark: bool, setup=True) -> Tuple[dict, List[str]]:
     """Sets up Matplotlib according to the given color scheme and pyplot module. Returns the theme and colors as a tuple, setting the theme and colormaps."""
     theme = rho_dark if is_dark else rho_light
+    colors = DARK_COLORS if is_dark else LIGHT_COLORS
     if setup:
         import matplotlib as mpl
         import matplotlib.pyplot as plt
@@ -142,7 +143,7 @@ def setup(is_dark: bool, setup=True) -> Tuple[dict, List[str]]:
         # we're confident that matplotlib is installed
         theme["axes.prop_cycle"] = mpl.cycler(
             # remove # from color beginning
-            color=[x[1:] for x in LIGHT_COLORS]
+            color=[x[1:] for x in colors]
         )
 
         for name, palette in SEQUENTIAL.items():
@@ -157,15 +158,37 @@ def setup(is_dark: bool, setup=True) -> Tuple[dict, List[str]]:
             except ValueError:
                 plt.register_cmap(name="rho_" + name + "_r", cmap=cmap.reversed())
 
-        # https://github.com/jupyter/notebook/issues/3691
+        # https://github.com/ipython/ipykernel/issues/267
 
-        # Some IPython versions have a bug where Matplotlib styles don't take
-        # effect until the plt module is used, not just when it first imports.
-        # Clearing the figure is the least intrusive way I can find to trigger
-        # this update so the theme will take effect without having to put this
-        # in a separate cell from the import.
-        plt.clf()
+        # Setting %matplotlib inline erases some styles, so the full theme doesn't
+        # take effect until you run the cell again. To fix this, if we're in IPython,
+        # load that first, so those rcParams get overwritten. Loading matplotlib
+        # with, e.g., plt.clf() also works, but it prints out the figure object, which
+        # we don't want.
+
+        # https://stackoverflow.com/questions/15411967/how-can-i-check-if-code-is-executed-in-the-ipython-notebook
+        def in_notebook():
+            try:
+                from IPython import get_ipython
+
+                if "IPKernelApp" not in get_ipython().config:  # pragma: no cover
+                    return False
+            except ImportError:
+                return False
+            except AttributeError:
+                return False
+            return True
+
+        if in_notebook():
+            try:
+                from IPython import get_ipython
+                from matplotlib_inline.backend_inline import configure_inline_support
+
+                configure_inline_support(get_ipython(), plt.get_backend())
+            except ImportError:
+                # not using this backend, no need to do anything
+                pass
 
         plt.style.use(theme)
 
-    return (theme, [x["color"] for x in theme["axes.prop_cycle"]])
+    return (theme, colors)
