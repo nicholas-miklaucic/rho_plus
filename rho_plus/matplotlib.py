@@ -5,7 +5,6 @@ from typing import List, Tuple
 from .colors import LIGHT_COLORS, DARK_COLORS, LIGHT_SHADES, DARK_SHADES
 from .sequential_palettes import SEQUENTIAL
 
-# Colors are taken from BlueprintJS. Background-foreground colors are default in Elastic UI.
 
 rho = {
     # text sizes
@@ -128,18 +127,22 @@ def setup(is_dark: bool, setup=True) -> Tuple[dict, List[str]]:
     if setup:
         import matplotlib as mpl
         import matplotlib.pyplot as plt
-        from matplotlib.colors import LinearSegmentedColormap
+
+        if "xtick.labelcolor" not in plt.rcParams.keys():
+            # starting from matplotlib 3.4.0, you can set the label color differently from the ticks
+            # if that isn't available, instead we make the tick color darker so the labels are readable
+            theme["xtick.color"] = theme["xtick.labelcolor"]
+            theme["ytick.color"] = theme["ytick.labelcolor"]
+
+        # for other compatibility, like legend.labelcolor or axes.titlecolor, there's no adjustments
+        # we have to make, and we just delete the key
+        theme = {k: v for k, v in theme.items() if k in plt.rcParams.keys()}
 
         # this annoyingly requires a matplotlib object, so delay until
         # we're confident that matplotlib is installed
-        rho_light["axes.prop_cycle"] = mpl.cycler(
+        theme["axes.prop_cycle"] = mpl.cycler(
             # remove # from color beginning
             color=[x[1:] for x in LIGHT_COLORS]
-        )
-
-        rho_dark["axes.prop_cycle"] = mpl.cycler(
-            # remove # from color beginning
-            color=[x[1:] for x in DARK_COLORS]
         )
 
         for name, palette in SEQUENTIAL.items():
