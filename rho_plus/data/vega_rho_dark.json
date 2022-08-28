@@ -1,0 +1,130 @@
+{
+  "config": {
+    "background": "#1D1E24",
+    "numberFormat": ".5~r",
+    "range": {
+      "category": [
+        "#00a0ec",
+        "#00bc70",
+        "#deca00",
+        "#ff7300",
+        "#d83990",
+        "#7555d3",
+        "#8ac7ff",
+        "#00f0ff",
+        "#387200",
+        "#aa2e00",
+        "#ff7dc6",
+        "#e960ff"
+      ],
+      "heatmap": [
+        "#160030",
+        "#18084d",
+        "#0d1b63",
+        "#002e75",
+        "#003f82",
+        "#00518b",
+        "#00658f",
+        "#00798e",
+        "#008e85",
+        "#00a370",
+        "#39b455",
+        "#81bd49",
+        "#b1c54a",
+        "#dbcc5a",
+        "#fdd576",
+        "#ffe9b4"
+      ],
+      "diverging": [
+        "#00e1c3",
+        "#00c5c1",
+        "#00a6b8",
+        "#0086a8",
+        "#006992",
+        "#014d77",
+        "#0e345a",
+        "#131e3b",
+        "#2e152b",
+        "#4c2239",
+        "#6b3346",
+        "#8b444f",
+        "#ac5854",
+        "#cb6f55",
+        "#e88853",
+        "#fda04f"
+      ],
+      "ramp": [
+        "#461878",
+        "#3f2a89",
+        "#313b97",
+        "#154ba1",
+        "#005aa6",
+        "#0066a8",
+        "#0073a7",
+        "#0080a3",
+        "#008e9b",
+        "#009a91",
+        "#00a680",
+        "#2fb06c",
+        "#67b75a",
+        "#8fbb49",
+        "#b3be3b",
+        "#d5bf36"
+      ]
+    },
+    "circle": {
+      "size": 100,
+      "fill": "#00a0ec"
+    },
+    "square": {
+      "size": 100,
+      "fill": "#00a0ec"
+    },
+    "line": {
+      "strokeWidth": 3
+    },
+    "style": {
+      "guide-label": {
+        "fill": "#98A2B3",
+        "fontWeight": 400,
+        "fontSize": 16
+      },
+      "guide-title": {
+        "fill": "#D4DAE5",
+        "fontSize": 20,
+        "fontWeight": 400
+      },
+      "group-title": {
+        "fill": "#D4DAE5",
+        "fontSize": 22,
+        "fontWeight": 700
+      }
+    },
+    "axis": {
+      "tickFontWeight": 600,
+      "tickColor": "#98A2B3",
+      "domainColor": "#98A2B3"
+    },
+    "axisY": {
+      "titleAngle": 0,
+      "titleAlign": "right"
+    },
+    "axisXBand": {
+      "labelAngle": -45
+    },
+    "axisQuantitative": {
+      "grid": false
+    },
+    "legend": {
+      "labelColor": "#D4DAE5",
+      "gradientHorizontalMinLength": 200,
+      "gradientHorizontalMaxLength": 1000,
+      "gradientVerticalMinLength": 200,
+      "gradientVerticalMaxLength": 1000
+    },
+    "view": {
+      "background": "#1D1E24",
+      "stroke": "transparent"
+    }
+  }
+}

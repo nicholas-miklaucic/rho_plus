@@ -4,10 +4,23 @@
 import altair as alt
 
 from .colors import LIGHT_SHADES, DARK_SHADES, LIGHT_COLORS, DARK_COLORS
-import colorcet as cc
+from .matplotlib import rho_dark, rho_light
+from .matplotlib import setup as mpl_setup
+from .sequential_palettes import SEQUENTIAL
+import matplotlib.colors
+
+
+def color_values(theme):
+    # more values is closer to the original LCH space, but more data
+    return [
+        matplotlib.colors.rgb2hex(x)
+        for x in theme.as_mpl_cmap()([i / 15 for i in range(16)])
+    ]
+
 
 # define the theme by returning the dictionary of configurations
 def rho(is_dark: bool):
+    theme, colors = mpl_setup(is_dark, False)
     empty, lightest, light, medium, dark, darkest = (
         DARK_SHADES if is_dark else LIGHT_SHADES
     )
@@ -15,60 +28,52 @@ def rho(is_dark: bool):
     def r():
         return {
             "config": {
-                "background": empty,
-                "view": {"stroke": "transparent", "autosize": "fit",},
-                "axis": {
-                    "domain": False,
-                    "grid": False,
-                    "gridColor": light,
-                    "tickColor": medium,
-                    "gridWidth": 1,
-                    "gridOpacity": 0.7,
-                    "labelFont": "sans-serif",
-                    "labelFontWeight": 300,
-                    "labelFontSize": 14,
-                    "labelColor": dark,
-                    "titleAnchor": "middle",
-                    "titleColor": dark,
-                    "titleFont": "sans-serif",
-                    "titleFontSize": 16,
-                    "titleFontWeight": 400,
-                    "titlePadding": 10,
-                    "zindex": 0,
-                },
-                "axisBottom": {"domain": True,},
-                "axisLeft": {"titleAngle": 0, "titleAlign": "right", "domain": True,},
-                "axisQuantitative": {"tickCount": 6,},
-                "legend": {
-                    "labelColor": dark,
-                    "labelFontWeight": 300,
-                    "labelFontSize": 14,
-                    "titleColor": darkest,
-                    "titleFontWeight": 400,
-                    "titleFontSize": 16,
-                    "titlePadding": 10,
-                    "gridLayout": "all",
-                    "fillColor": lightest,
-                    "padding": 10,
-                    "cornerRadius": 6,
-                    "rowPadding": 10,
-                },
-                "title": {
-                    "color": darkest,
-                    "font": "sans-serif",
-                    "fontSize": 24,
-                    "fontWeight": 700,
-                    "subtitleColor": darkest,
-                    "subtitleFont": "sans-serif",
-                    "offset": 20,
-                    "anchor": "middle",
-                },
+                "background": "#" + theme["figure.facecolor"],
+                "numberFormat": ".5~r",
                 "range": {
-                    "category": DARK_COLORS,
-                    "diverging": cc.coolwarm,
-                    "heatmap": cc.CET_L17,
-                    "ordinal": {"scheme": "darkmulti" if is_dark else "lightmulti"},
-                    "ramp": cc.CET_L17[-30:30:-1] if is_dark else cc.CET_L17[:60:-1],
+                    "category": colors,
+                    "heatmap": color_values(SEQUENTIAL["gouldia"]),
+                    "diverging": color_values(
+                        SEQUENTIAL[
+                            "div_icefire_shift" if is_dark else "div_coolwarm_shift"
+                        ]
+                    ),
+                    "ramp": color_values(SEQUENTIAL["viridia"]),
+                },
+                "circle": {"size": 100, "fill": colors[0],},
+                "square": {"size": 100, "fill": colors[0],},
+                "line": {"strokeWidth": 3,},
+                "style": {
+                    "guide-label": {"fill": dark, "fontWeight": 400, "fontSize": 16,},
+                    "guide-title": {
+                        "fill": darkest,
+                        "fontSize": 20,
+                        "fontWeight": 400,
+                    },
+                    "group-title": {
+                        "fill": darkest,
+                        "fontSize": 22,
+                        "fontWeight": 700,
+                    },
+                },
+                "axis": {
+                    "tickFontWeight": 600,
+                    "tickColor": dark,
+                    "domainColor": dark,
+                },
+                "axisY": {"titleAngle": 0, "titleAlign": "right"},
+                "axisXBand": {"labelAngle": -45},
+                "axisQuantitative": {"grid": False},
+                "legend": {
+                    "labelColor": darkest,
+                    "gradientHorizontalMinLength": 200,
+                    "gradientHorizontalMaxLength": 1000,
+                    "gradientVerticalMinLength": 200,
+                    "gradientVerticalMaxLength": 1000,
+                },
+                "view": {
+                    "background": "#" + theme["axes.facecolor"],
+                    "stroke": "transparent",
                 },
             }
         }
@@ -80,7 +85,11 @@ RHO_LIGHT = rho(False)()
 RHO_DARK = rho(True)()
 
 
+def _register_themes():
+    alt.themes.register("rho_dark", rho(True))
+    alt.themes.register("rho_light", rho(False))
+
+
 def setup(is_dark: bool):
     """Sets up Altair according to the given color scheme."""
-    alt.themes.register("rho", rho(is_dark))
-    alt.themes.enable("rho")
+    alt.themes.enable("rho_dark" if is_dark else "rho_light")
