@@ -15,6 +15,23 @@ except ModuleNotFoundError:
     pass
 
 try:
+    import bokeh
+
+    from .bokeh import setup as bokeh_setup
+    from .bokeh import rho_light as bokeh_rho_light
+    from .bokeh import rho_dark as bokeh_rho_dark
+except ModuleNotFoundError:
+    pass
+
+try:
+    from .panel import ThemedPanel
+    from .panel import pn_setup_fonts
+
+    pn_setup_fonts()
+except ModuleNotFoundError:
+    pass
+
+try:
     import plotly
     from .plotly import setup as plotly_setup
     from .plotly import register_themes as _register_themes
