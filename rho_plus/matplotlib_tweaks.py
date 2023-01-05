@@ -6,6 +6,7 @@ import numpy as np
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from .util import spread as rho_spread
 
 
 def remove_crowded(ax=None):
@@ -89,65 +90,6 @@ def smart_ticks(ax=None, xaxis=True, yaxis=True):
     remove_crowded(ax)
 
 
-def spread(x, dmin):
-    """Returns a shifted x' with minimum total shift such that no two points in x' are within dmin.
-    If dmin is array-like, it must be the same shape as x, and notes the minimum space each element
-    must have on either side."""
-    x = np.array(x, copy=False)
-    if len(x) <= 1:
-        return x
-
-    # we need to work on sorted x, but we also need to remember the indices so we can adjust the right ones
-    sort_inds = np.argsort(x)
-    x_sort = x.copy()[sort_inds]
-
-    dmin = np.broadcast_to(dmin, x.shape)[sort_inds]
-
-    # Algorithms for Minimizing the Movements of Spreading Points in Linear Domains
-    # Li, Wang 2015
-    # https://cccg.ca/proceedings/2015/08.pdf
-
-    def adjust_rightward(x_sort):
-        """Returns necessary adjustments if only addition is allowed."""
-        adj = np.zeros_like(x_sort, dtype=np.float64)
-        for i in range(1, len(x_sort)):
-            # previous element's new location is x_sort[i-1] + adj[i-1]
-            # move to max(x_sort[i], prev + dmin)
-
-            # dmin = max(dmin[i], dmin[i-1])
-
-            local_dmin = max(dmin[i], dmin[i - 1])
-            prev = x_sort[i - 1] + adj[i - 1]
-            new_x = max(x_sort[i], prev + local_dmin)
-            adj[i] = new_x - x_sort[i]
-
-        return adj
-
-    # The algorithm in Li, Wang solves the problem given, but there's one tweak to the problem
-    # specification that we want to make. Specifically, we'd like to add that, if there's no
-    # need to move a particular value, we shouldn't.
-    # We do this by simply doing adjustments rightward and leftward and seeing if any values
-    # are zero in both. These values stay zero in the final adjustments
-    adj1 = adjust_rightward(x_sort)
-    adj2 = -adjust_rightward(-x_sort[::-1])[::-1]
-
-    no_shift_required = (adj1 == 0) & (adj2 == 0)
-
-    # Li, Wang now moves everything left by half the max movement
-    # this produces the minimum maximum shift
-    # alternatively, we subtract by the median, which tries to minimize the sum of absolute value of shifts
-    # subtracting by mean tries to minimize the sum of squares of shifts
-
-    adj1 -= np.max(adj1) / 2
-    # adj1 -= np.median(adj1)
-    # adj1 -= np.mean(adj1)
-
-    adj1 = np.where(no_shift_required, 0, adj1)
-
-    # now adjust, going back to indices of original matrix
-    return x + adj1[np.argsort(sort_inds)]
-
-
 def get_handles_labels(ax):
     """Gets a tuple (handles, labels). Accounts for Seaborn's use of phantom lines, so the lines
     will actually have data on the screen."""
@@ -171,10 +113,13 @@ def height(text, ax, **kwargs):
     return bb.height
 
 
-def line_labels(ax=None, remove_legend=True):
+def line_labels(ax=None, remove_legend=True, spread=None):
     """Does automatic line labeling, replacing a legend with side labels."""
     if ax is None:
         ax = plt.gca()
+
+    if spread is None:
+        spread = rho_spread
 
     handles, labels = get_handles_labels(ax)
     labels = ["\n".join(textwrap.wrap(label, width=15)) for label in labels]
