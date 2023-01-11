@@ -61,8 +61,10 @@ for is_dark in (True, False):
                 "major_label_text_color": theme["axes.titlecolor"],
                 "major_label_text_font": font,
                 "major_label_text_font_size": "1.025em",
-                "background_fill_color": theme["axes.facecolor"],
                 "major_tick_line_alpha": 0,
+            },
+            "ColorBar": {
+                "background_fill_color": theme["axes.facecolor"],
                 "bar_line_alpha": 0,
             },
             "Line": {"line_width": 4,},
