@@ -4,7 +4,18 @@
 import re
 from typing import Iterable, Union
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib import colors as mpl_colors
 
+
+def is_curr_dark():
+    """Determine if the current Matplotlib theme is dark.
+
+    Uses figure.facecolor and a simple luminance check."""
+    # yadda yadda yadda this is not really correct, no one uses gray as their bgcolor
+
+    r, g, b =  mpl_colors.to_rgb(plt.rcParams['figure.facecolor'])
+    return (0.2 * r + 0.6 * g + 0.2 * b) <= 0.
 
 def spread(x, dmin):
     x = np.array(x, copy=False).astype(np.float64)
@@ -61,10 +72,10 @@ def spread(x, dmin):
     # - If two chains are within the minimum distance of each other, merge them
 
     def adjust(chains):
+        new_x = x_sort.copy()
         for c in np.unique(chains):
             chain_adj = adj[chains == c]
             chain_adj -= np.max(chain_adj) / 2
-            new_x = x_sort.copy()
             new_x[chains == c] += chain_adj
         return new_x
 
