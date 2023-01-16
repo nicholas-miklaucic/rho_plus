@@ -6,10 +6,12 @@ This is basically the stuff I wish came by default in libraries like `numpy`, `p
 
 ### Installation
 
-To ensure that all customizations apply to the correct version, Rho+ does not include `matplotlib`. If you don't have that installed, you can fix that with
+Rho+ doesn't include plotting libraries itself, so it maps correctly to your current version with whatever settings you gave it.
+
+You'll need a recent version of `matplotlib` to make things work:
 
 ```bash
-pip install matplotlib
+pip install --upgrade matplotlib
 ```
 
 Then, run
@@ -18,15 +20,33 @@ Then, run
 pip install rho_plus
 ```
 
+Other libraries that `rho_plus` works well with:
+
+- `altair`
+- `seaborn`
+- `holoviews`
+- `hvplot`
+- `bokeh`
+- `panel`
+- `plotly`
+
+### Gallery/User Guide
+
+To see what Rho+ has to offer in an interactive environment, my recommendation is to use the Google Colab notebook found here:
+
+[https://colab.research.google.com/drive/13XM2IL53TqGQlNXCv8kW5pMbj2H7WChP?usp=sharing](https://colab.research.google.com/drive/13XM2IL53TqGQlNXCv8kW5pMbj2H7WChP?usp=sharing)
+
+This lets you explore the interactive features on top of the other functionality and change things as you desire.
+
 ### Matplotlib Demo
 
 Rho+ includes several custom additions to Matplotlib's functionality, and a custom Matplotlib theme that can be set to either light or dark mode.
 
 ```python
 import matplotlib.pyplot as plt
-import rho_plus
+import rho_plus as rp
 
-theme, cs = rho_plus.mpl_setup(is_dark=True, setup=True)
+theme, cs = rp.mpl_setup(is_dark=True, setup=True)
 ```
 
 Now `theme` is the full Matplotlib theme, `cs` is a list of the default plot cycle colors, and Matplotlib has been set up to use a dark theme.
