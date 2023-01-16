@@ -9,7 +9,7 @@ Welcome to Rho+'s documentation!
 .. toctree::
    :maxdepth: 2
    
-   showcase
+   gallery
    quantitative_colormaps
 
 
