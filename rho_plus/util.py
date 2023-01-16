@@ -7,6 +7,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors as mpl_colors
 
+def pd_unique(arr):
+    """Like pandas unique in that it preserves sort order.
+    Saves having the pandas dependency."""
+    idx = np.unique(arr, return_index=True)[1]
+    return arr[np.sort(idx)]
+
 
 def is_curr_dark():
     """Determine if the current Matplotlib theme is dark.
@@ -21,7 +27,7 @@ def spread(x, dmin):
     x = np.array(x, copy=False).astype(np.float64)
     if len(x) <= 1:
         return x
-    
+
     # we need to work on sorted x, but we also need to remember the indices so we can adjust the right ones
     sort_inds = np.argsort(x)
     x_sort = x.copy()[sort_inds]
@@ -32,7 +38,7 @@ def spread(x, dmin):
     # Ghadiri, Yazdanbod 2016
     # https://www.researchgate.net/publication/304641457_Minimizing_the_Total_Movement_for_Movement_to_Independence_Problem_on_a_Line
     # this function does things a little differently, which I think results in clearer code
-    
+
     slack = np.zeros_like(x_sort, dtype=np.float64)
     adj = np.zeros_like(x_sort, dtype=np.float64)
     for i in range(1, len(x_sort)):
@@ -43,13 +49,13 @@ def spread(x, dmin):
 
         local_dmin = max(dmin[i], dmin[i-1])
         prev = x_sort[i-1] + adj[i-1]
-        new_x = max(x_sort[i], prev + local_dmin)        
+        new_x = max(x_sort[i], prev + local_dmin)
         slack[i] = new_x - (prev + local_dmin)
         adj[i] = new_x - x_sort[i]
 
     new_x = x_sort.copy()
     chains = np.ones_like(new_x)
-    
+
     for i in range(1, len(new_x)):
         if slack[i] == 0:
             chains[i] = chains[i - 1]
@@ -62,7 +68,7 @@ def spread(x, dmin):
 
     # This produces incorrect results when some elements move left, thereby entangling more.
     # For example, with dmin = 3 the list [0, 4, 5, 6] is actually all connected, because
-    # the chain [4, 5, 6] will become [2, 5, 8] which is within range of 0. 
+    # the chain [4, 5, 6] will become [2, 5, 8] which is within range of 0.
 
     # To adjust a single chain, we compute the median of the shifts if only rightward shifts
     # are allowed, and subtract that median from each of the shifts.
@@ -75,43 +81,63 @@ def spread(x, dmin):
         new_x = x_sort.copy()
         for c in np.unique(chains):
             chain_adj = adj[chains == c]
-            chain_adj -= np.max(chain_adj) / 2
+            # chain_adj -= np.max(chain_adj) / 2
+            chain_adj -= np.mean(chain_adj)
+            # chain_adj -= np.median(chain_adj)
+
             new_x[chains == c] += chain_adj
         return new_x
+
+    def detach_chains(chains):
+        # print(chains)
+        for i in range(1, len(chains)):
+            if chains[i] == chains[i - 1]:
+                detached_chains = chains.copy()
+                detached_chains[i] = np.max(detached_chains) + 1
+                # print('detach', i, inds[i:], detached_chains)
+                if not chain_overlaps(detached_chains).any():
+                    # print('success')
+                    return detach_chains(detached_chains)
+        return chains
 
     def chain_overlaps(chains):
         adj_x = adjust(chains)
         intervals = []
-        for c in np.unique(chains):
-            inds = np.nonzero(chains == c)[0]            
+        import pandas as pd
+        for c in pd_unique(chains):
+            inds = np.nonzero(chains == c)[0]
             intervals.append((
                 adj_x[inds[0]] - dmin[inds[0]],
-                adj_x[inds[0]], 
+                adj_x[inds[0]],
                 adj_x[inds[-1]],
                 adj_x[inds[-1]] + dmin[inds[-1]]))
 
         # print(intervals)
         overlaps = [False]
         for i in range(1, len(intervals)):
-            (lo1, a1, b1, hi1), (lo2, a2, b2, hi2) = intervals[i-1], intervals[i]            
+            (lo1, a1, b1, hi1), (lo2, a2, b2, hi2) = intervals[i-1], intervals[i]
             overlaps.append(b1 > lo2 or a2 < hi1)
 
         return np.array(overlaps)
 
     overlaps = chain_overlaps(chains)
-    while overlaps.any():    
-        # print(chains)
-        # print(adjust(chains))
-        # print(overlaps)
-    
+    # print(chains)
+    # print(overlaps)
+    while overlaps.any():
         for i in range(1, len(overlaps)):
             if overlaps[i]:
-                print(i, overlaps)
+                # print(i, overlaps)
                 left, right = np.unique(chains)[i-1:i+1]
                 chains[chains == right] = left
 
         overlaps = chain_overlaps(chains)
 
+    # print(chains)
+    chains = detach_chains(chains)
+    # print(chains)
+    # print(adjust([1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 2, 2]).round(1))
+    # print(x_sort.round(1))
+    # print(adjust(chains).round(1))
     return adjust(chains)[np.argsort(sort_inds)]
 
 
