@@ -34,9 +34,11 @@ Other libraries that `rho_plus` works well with:
 
 To see what Rho+ has to offer in an interactive environment, my recommendation is to use the Google Colab notebook found here:
 
-[https://colab.research.google.com/drive/13XM2IL53TqGQlNXCv8kW5pMbj2H7WChP?usp=sharing](https://colab.research.google.com/drive/13XM2IL53TqGQlNXCv8kW5pMbj2H7WChP?usp=sharing)
+[https://colab.research.google.com/drive/13XM2IL53TqGQlNXCv8kW5pMbj2H7WChP#sandboxMode=true](https://colab.research.google.com/drive/13XM2IL53TqGQlNXCv8kW5pMbj2H7WChP#sandboxMode=true)
 
 This lets you explore the interactive features on top of the other functionality and change things as you desire.
+
+Simply run the installation cell at the top, Runtime > Run All, and check it out!
 
 ### Matplotlib Demo
 
