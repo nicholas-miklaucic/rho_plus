@@ -54,18 +54,16 @@ for is_dark in (True, False):
                 "background_fill_alpha": 0.25,
                 "background_fill_color": theme["axes.facecolor"],
             },
-            "BaseColorBar": {
+            "ColorBar": {
                 "title_text_color": theme["axes.titlecolor"],
                 "title_text_font": font,
                 "title_text_font_size": "1.025em",
-                "major_label_text_color": theme["axes.titlecolor"],
+                "background_fill_color": theme["axes.facecolor"],
+                "bar_line_alpha": 0,
+                "major_label_text_color": theme["xtick.labelcolor"],
                 "major_label_text_font": font,
                 "major_label_text_font_size": "1.025em",
                 "major_tick_line_alpha": 0,
-            },
-            "ColorBar": {
-                "background_fill_color": theme["axes.facecolor"],
-                "bar_line_alpha": 0,
             },
             "Line": {"line_width": 4,},
         }

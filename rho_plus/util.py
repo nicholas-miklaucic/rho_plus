@@ -14,14 +14,22 @@ def pd_unique(arr):
     return arr[np.sort(idx)]
 
 
-def is_curr_dark():
-    """Determine if the current Matplotlib theme is dark.
+def is_curr_dark_bokeh():
+    """Determine if the current Bokeh theme is dark.
 
-    Uses figure.facecolor and a simple luminance check."""
+    Uses figure bgcolor and a simple luminance check."""
     # yadda yadda yadda this is not really correct, no one uses gray as their bgcolor
 
-    r, g, b =  mpl_colors.to_rgb(plt.rcParams['figure.facecolor'])
-    return (0.2 * r + 0.6 * g + 0.2 * b) <= 0.
+    import holoviews as hv
+
+    try:
+        bgcolor = hv.renderer('bokeh').theme._json['attrs']['Figure']['background_fill_color']
+    except NameError as e:
+        # default white
+        bgcolor = '#FFFFFF'
+
+    r, g, b =  mpl_colors.to_rgb(bgcolor)
+    return (0.2 * r + 0.6 * g + 0.2 * b) <= 0.5
 
 def spread(x, dmin):
     x = np.array(x, copy=False).astype(np.float64)
@@ -47,7 +55,7 @@ def spread(x, dmin):
 
         # dmin = max(dmin[i], dmin[i-1])
 
-        local_dmin = max(dmin[i], dmin[i-1])
+        local_dmin = dmin[i] + dmin[i-1]
         prev = x_sort[i-1] + adj[i-1]
         new_x = max(x_sort[i], prev + local_dmin)
         slack[i] = new_x - (prev + local_dmin)
@@ -102,8 +110,8 @@ def spread(x, dmin):
 
     def chain_overlaps(chains):
         adj_x = adjust(chains)
+
         intervals = []
-        import pandas as pd
         for c in pd_unique(chains):
             inds = np.nonzero(chains == c)[0]
             intervals.append((
@@ -116,7 +124,8 @@ def spread(x, dmin):
         overlaps = [False]
         for i in range(1, len(intervals)):
             (lo1, a1, b1, hi1), (lo2, a2, b2, hi2) = intervals[i-1], intervals[i]
-            overlaps.append(b1 > lo2 or a2 < hi1)
+            # overlaps.append(b1 > lo2 or a2 < hi1)
+            overlaps.append(hi1 > lo2 or lo2 < hi1)
 
         return np.array(overlaps)
 

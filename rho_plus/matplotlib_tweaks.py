@@ -113,8 +113,9 @@ def height(text, ax, **kwargs):
     return bb.height
 
 
-def line_labels(ax=None, remove_legend=True, spread=None):
-    """Does automatic line labeling, replacing a legend with side labels."""
+def line_labels(ax=None, remove_legend=True, spread=None, **kwargs):
+    """Does automatic line labeling, replacing a legend with side labels.
+    Kwargs passed to ax.text: don't pass alignment or color."""
     if ax is None:
         ax = plt.gca()
 
@@ -123,11 +124,8 @@ def line_labels(ax=None, remove_legend=True, spread=None):
 
     handles, labels = get_handles_labels(ax)
     labels = ["\n".join(textwrap.wrap(label, width=15)) for label in labels]
-    data_to_in = mpl.transforms.CompositeGenericTransform(
-        ax.transData, ax.figure.dpi_scale_trans.inverted()
-    )
 
-    margin = np.array([height(label, ax) for label in labels])
+    margin = np.array([height(label, ax, **kwargs) for label in labels])
 
     y_ends = np.array([handle.get_xydata()[-1] for handle in handles])
 
@@ -142,7 +140,7 @@ def line_labels(ax=None, remove_legend=True, spread=None):
         color = handle.get_color()
         ax.plot([y_end[0], xmax], [y_end[1], spreaded[1]], ls="--", lw=1, c=color)
 
-        ax.text(xmax, spreaded[1], label, ha="left", va="center", color=color)
+        ax.text(xmax, spreaded[1], label, ha="left", va="center", color=color, **kwargs)
 
     if remove_legend:
         ax.legend().remove()

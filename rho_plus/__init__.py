@@ -24,10 +24,10 @@ except ModuleNotFoundError:
     pass
 
 try:
-    from .panel import ThemedPanel
-    from .panel import pn_setup_fonts
+    from .panel import ThemedPanel, datagrid, show_json
+    from .panel import pn_setup as panel_setup
 
-    pn_setup_fonts()
+
 except ModuleNotFoundError:
     pass
 

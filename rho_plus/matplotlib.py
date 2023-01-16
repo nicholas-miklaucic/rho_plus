@@ -3,6 +3,7 @@
 
 from typing import List, Tuple
 from .colors import LIGHT_COLORS, DARK_COLORS, LIGHT_SHADES, DARK_SHADES
+from .palettes import SequentialPalette
 from .sequential_palettes import SEQUENTIAL
 
 
@@ -147,6 +148,8 @@ def setup(is_dark: bool, setup=True) -> Tuple[dict, List[str]]:
         )
 
         for name, palette in SEQUENTIAL.items():
+            if not isinstance(palette, SequentialPalette):
+                continue
             cmap = palette.as_mpl_cmap()
             try:
                 plt.get_cmap("rho_" + name)
