@@ -8,30 +8,34 @@ import panel as pn
 import warnings
 from .util import is_curr_dark_bokeh
 
+
 def datagrid(df):
     """Renders a DataFrame as an interactive data grid using Perspective.
     Intelligently picks the color theme to use based on the current Matplotlib theme."""
-    persp_theme = 'material-dense-dark' if is_curr_dark_bokeh() else 'material-dense'
+    persp_theme = "material-dense-dark" if is_curr_dark_bokeh() else "material-dense"
 
-    return pn.pane.Perspective(
-        df,
-        theme=persp_theme,
-        sizing_mode='stretch_width')
+    return pn.pane.Perspective(df, theme=persp_theme, sizing_mode="stretch_width")
 
 
 def show_json(obj):
     """Render JSON (or a JSON-serializable object) as an interactive tree.
 
     Intelligently picks the color theme to use based on the current Matplotlib theme."""
-    json_theme = 'dark' if is_curr_dark_bokeh() else 'light'
+    json_theme = "dark" if is_curr_dark_bokeh() else "light"
 
     json_obj = json.dumps(obj, default=lambda o: repr(o))
 
     return pn.Column(
-        pn.pane.JSON(json_obj, theme=json_theme, height=600, sizing_mode='stretch_width', hover_preview=True),
-        sizing_mode='stretch_width',
-        background='#1E1E1E' if json_theme == 'dark' else '#FFFFFF',
-        scroll=True
+        pn.pane.JSON(
+            json_obj,
+            theme=json_theme,
+            height=600,
+            sizing_mode="stretch_width",
+            hover_preview=True,
+        ),
+        sizing_mode="stretch_width",
+        background="#1E1E1E" if json_theme == "dark" else "#FFFFFF",
+        scroll=True,
     )
 
 
@@ -49,7 +53,8 @@ def pn_setup(is_dark: bool = True, **kwargs):
     Replaces a call to pn.extension: pass in kwargs to affect that"""
     try:
         import panel as pn
-        pn.extension('perspective', 'gridstack', **kwargs)
+
+        pn.extension("perspective", "gridstack", **kwargs)
         pn_setup_fonts()
         bokeh_setup(is_dark)
     except Exception as e:

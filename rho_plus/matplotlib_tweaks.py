@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from .util import spread as rho_spread
+from .color_util import contrast_with
 
 
 def remove_crowded(ax=None):
@@ -140,7 +141,7 @@ def line_labels(ax=None, remove_legend=True, spread=None, **kwargs):
         color = handle.get_color()
         ax.plot([y_end[0], xmax], [y_end[1], spreaded[1]], ls="--", lw=1, c=color)
 
-        ax.text(xmax, spreaded[1], label, ha="left", va="center", color=color, **kwargs)
+        ax.text(xmax, spreaded[1], label, ha="left", va="center", color=contrast_with(color, ax.get_facecolor()), **kwargs)
 
     if remove_legend:
         ax.legend().remove()

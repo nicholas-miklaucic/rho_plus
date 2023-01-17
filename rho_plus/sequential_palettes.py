@@ -12,7 +12,11 @@ SEQUENTIAL: Mapping[str, SequentialPalette] = {}
 for name, colors in SEQUENTIAL_DATA.items():
     for namespace in (globals(), SEQUENTIAL):
         namespace[name] = SequentialPalette(name, colors)
-        namespace['mpl_' + name] = SequentialPalette(name, colors).as_mpl_cmap()
-        namespace['mpl_' + name + '_r'] = SequentialPalette(name, colors).rev().as_mpl_cmap()
-        namespace['list_' + name] = SequentialPalette(name, colors).hex_colors()
-        namespace['list_' + name + '_r'] = SequentialPalette(name, colors).rev().hex_colors()
+        namespace["mpl_" + name] = SequentialPalette(name, colors).as_mpl_cmap()
+        namespace["mpl_" + name + "_r"] = (
+            SequentialPalette(name, colors).rev().as_mpl_cmap()
+        )
+        namespace["list_" + name] = SequentialPalette(name, colors).hex_colors()
+        namespace["list_" + name + "_r"] = (
+            SequentialPalette(name, colors).rev().hex_colors()
+        )

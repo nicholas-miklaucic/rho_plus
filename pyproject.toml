@@ -1,20 +1,24 @@
 [tool.poetry]
 name = "rho_plus"
-version = "0.5.0"
+version = "0.5.1"
 description = "Aesthetic and ergonomic enhancements to common Python data science tools"
 authors = ["Nicholas Miklaucic <nicholas.miklaucic@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.7, <3.11"
+python = ">=3.8, <=3.11"
 scipy = ">=1.7.0"
-
-[tool.poetry.dev-dependencies]
 matplotlib = "^3"
-scipy = ">=1.7.0"
-numpy = "^1.21"
-colour-science = "^0.4"
-seaborn = "^0.11"
+numpy = ">=1.21"
+colour-science = [
+    {version = "0.4.1", python = ">=3.8, <3.9"},
+    {version = "0.4.2", python = ">=3.9, <=3.11"}
+]
+seaborn = ">=0.11"
+hsluv = "^5.0.3"
+
+[tool.poetry.extras]
+dev = ["matplotlib", "scipy", "colour-science", "seaborn"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

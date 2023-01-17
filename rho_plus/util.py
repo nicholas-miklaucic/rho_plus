@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors as mpl_colors
 
+
 def pd_unique(arr):
     """Like pandas unique in that it preserves sort order.
     Saves having the pandas dependency."""
@@ -23,13 +24,16 @@ def is_curr_dark_bokeh():
     import holoviews as hv
 
     try:
-        bgcolor = hv.renderer('bokeh').theme._json['attrs']['Figure']['background_fill_color']
+        bgcolor = hv.renderer("bokeh").theme._json["attrs"]["Figure"][
+            "background_fill_color"
+        ]
     except NameError as e:
         # default white
-        bgcolor = '#FFFFFF'
+        bgcolor = "#FFFFFF"
 
-    r, g, b =  mpl_colors.to_rgb(bgcolor)
+    r, g, b = mpl_colors.to_rgb(bgcolor)
     return (0.2 * r + 0.6 * g + 0.2 * b) <= 0.5
+
 
 def spread(x, dmin):
     x = np.array(x, copy=False).astype(np.float64)
@@ -55,8 +59,8 @@ def spread(x, dmin):
 
         # dmin = max(dmin[i], dmin[i-1])
 
-        local_dmin = dmin[i] + dmin[i-1]
-        prev = x_sort[i-1] + adj[i-1]
+        local_dmin = dmin[i] + dmin[i - 1]
+        prev = x_sort[i - 1] + adj[i - 1]
         new_x = max(x_sort[i], prev + local_dmin)
         slack[i] = new_x - (prev + local_dmin)
         adj[i] = new_x - x_sort[i]
@@ -114,16 +118,19 @@ def spread(x, dmin):
         intervals = []
         for c in pd_unique(chains):
             inds = np.nonzero(chains == c)[0]
-            intervals.append((
-                adj_x[inds[0]] - dmin[inds[0]],
-                adj_x[inds[0]],
-                adj_x[inds[-1]],
-                adj_x[inds[-1]] + dmin[inds[-1]]))
+            intervals.append(
+                (
+                    adj_x[inds[0]] - dmin[inds[0]],
+                    adj_x[inds[0]],
+                    adj_x[inds[-1]],
+                    adj_x[inds[-1]] + dmin[inds[-1]],
+                )
+            )
 
         # print(intervals)
         overlaps = [False]
         for i in range(1, len(intervals)):
-            (lo1, a1, b1, hi1), (lo2, a2, b2, hi2) = intervals[i-1], intervals[i]
+            (lo1, a1, b1, hi1), (lo2, a2, b2, hi2) = intervals[i - 1], intervals[i]
             # overlaps.append(b1 > lo2 or a2 < hi1)
             overlaps.append(hi1 > lo2 or lo2 < hi1)
 
@@ -136,7 +143,7 @@ def spread(x, dmin):
         for i in range(1, len(overlaps)):
             if overlaps[i]:
                 # print(i, overlaps)
-                left, right = np.unique(chains)[i-1:i+1]
+                left, right = np.unique(chains)[i - 1 : i + 1]
                 chains[chains == right] = left
 
         overlaps = chain_overlaps(chains)
