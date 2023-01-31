@@ -34,22 +34,24 @@ def is_curr_dark_bokeh():
     r, g, b = mpl_colors.to_rgb(bgcolor)
     return (0.2 * r + 0.6 * g + 0.2 * b) <= 0.5
 
-
-def spread(x, dmin):
+def spread(x, margin):
     x = np.array(x, copy=False).astype(np.float64)
     if len(x) <= 1:
         return x
 
-    # we need to work on sorted x, but we also need to remember the indices so we can adjust the right ones
+    # # we need to work on sorted x, but we also need to remember the indices so we can adjust the right ones
     sort_inds = np.argsort(x)
     x_sort = x.copy()[sort_inds]
 
-    dmin = np.broadcast_to(dmin, x.shape)[sort_inds]
+    margin = np.broadcast_to(margin, x.shape)[sort_inds]
 
     # Minimizing the Total Movement for Movement to Independence Problem on a Line
     # Ghadiri, Yazdanbod 2016
     # https://www.researchgate.net/publication/304641457_Minimizing_the_Total_Movement_for_Movement_to_Independence_Problem_on_a_Line
     # this function does things a little differently, which I think results in clearer code
+
+    gap_dmin = np.concatenate([[0], (margin[1:] + margin[:-1]), [0]])
+
 
     slack = np.zeros_like(x_sort, dtype=np.float64)
     adj = np.zeros_like(x_sort, dtype=np.float64)
@@ -59,7 +61,8 @@ def spread(x, dmin):
 
         # dmin = max(dmin[i], dmin[i-1])
 
-        local_dmin = dmin[i] + dmin[i - 1]
+        # local_dmin = dmin[i] + dmin[i - 1]
+        local_dmin = gap_dmin[i]
         prev = x_sort[i - 1] + adj[i - 1]
         new_x = max(x_sort[i], prev + local_dmin)
         slack[i] = new_x - (prev + local_dmin)
@@ -120,10 +123,10 @@ def spread(x, dmin):
             inds = np.nonzero(chains == c)[0]
             intervals.append(
                 (
-                    adj_x[inds[0]] - dmin[inds[0]],
+                    adj_x[inds[0]] - gap_dmin[inds[0]],
                     adj_x[inds[0]],
                     adj_x[inds[-1]],
-                    adj_x[inds[-1]] + dmin[inds[-1]],
+                    adj_x[inds[-1]] + gap_dmin[inds[-1] + 1],
                 )
             )
 
@@ -131,8 +134,8 @@ def spread(x, dmin):
         overlaps = [False]
         for i in range(1, len(intervals)):
             (lo1, a1, b1, hi1), (lo2, a2, b2, hi2) = intervals[i - 1], intervals[i]
-            # overlaps.append(b1 > lo2 or a2 < hi1)
-            overlaps.append(hi1 > lo2 or lo2 < hi1)
+            overlaps.append(b1 > lo2 or a2 < hi1)
+            # overlaps.append(hi1 > lo2 or lo2 < hi1)
 
         return np.array(overlaps)
 
@@ -140,10 +143,10 @@ def spread(x, dmin):
     # print(chains)
     # print(overlaps)
     while overlaps.any():
+        chain_inds = pd_unique(chains)
         for i in range(1, len(overlaps)):
             if overlaps[i]:
-                # print(i, overlaps)
-                left, right = np.unique(chains)[i - 1 : i + 1]
+                left, right = chain_inds[i-1:i+1]
                 chains[chains == right] = left
 
         overlaps = chain_overlaps(chains)
@@ -154,8 +157,11 @@ def spread(x, dmin):
     # print(adjust([1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 2, 2]).round(1))
     # print(x_sort.round(1))
     # print(adjust(chains).round(1))
-    return adjust(chains)[np.argsort(sort_inds)]
+    # fig2, ax2 = plt.subplots()
+    # for center, m1, m2, c, y in zip(adjust(chains), gap_dmin[:-1], gap_dmin[1:], cs, np.linspace(0.7, 0.9, len(x))):
+    #     ax2.axvspan(center - m1, center + m2, 0, y, fill=False, alpha=1, ec=c, lw=1)
 
+    return adjust(chains)[np.argsort(sort_inds)]
 
 def labelcase(text: Union[str, Iterable[str]]):
     """Converts text to a title case and adds spacing from camel case."""
