@@ -13,21 +13,21 @@ import plotly.graph_objects as go
 import numpy as np
 
 from .matplotlib import setup as mpl_setup
-
-from .sequential_palettes import SEQUENTIAL
+from .util import decorate_all
+from .sequential_palettes import SEQUENTIAL, setup_cmap_aliases
 
 
 def register_themes():
     for theme_name, is_dark in zip(("rho_light", "rho_dark"), (False, True)):
         inherit = "plotly_dark" if is_dark else "plotly"
         default = pio.templates[inherit].layout
-
+        setup_cmap_aliases(is_dark)
         templ: go.Layout = go.Layout(default)
         templ.colorscale.sequential = templ.colorscale.sequentialminus = SEQUENTIAL[
-            "viridia"
+            "sequential"
         ].hex_colors()[::17]
         templ.colorscale.diverging = (
-            SEQUENTIAL["div_icefire_shift" if is_dark else "div_coolwarm_shift"]
+            SEQUENTIAL["diverging"]
         ).hex_colors()[2:-1:18]
 
         _theme, cs = mpl_setup(is_dark=is_dark, setup=True)
@@ -90,5 +90,8 @@ def register_themes():
         pio.templates[theme_name] = go.layout.Template(layout=templ, data=data)
 
 
-def setup(is_dark):
+def setup(is_dark, wrap_for_eval=True):
+    if wrap_for_eval:
+        decorate_all(px)
+        decorate_all(go)
     pio.templates.default = "rho_dark" if is_dark else "rho_light"

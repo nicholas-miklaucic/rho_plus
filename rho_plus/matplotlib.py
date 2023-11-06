@@ -4,8 +4,9 @@
 from typing import List, Tuple
 from .colors import LIGHT_COLORS, DARK_COLORS, LIGHT_SHADES, DARK_SHADES
 from .palettes import SequentialPalette
-from .sequential_palettes import SEQUENTIAL
-
+from .sequential_palettes import setup_cmap_aliases, ALIASES
+from .util import decorate_all
+from functools import wraps
 
 rho = {
     # text sizes
@@ -36,9 +37,8 @@ rho = {
     "axes.spines.top": "false",
     # set default figure size to a bit more than 6.4 x 4.8
     "figure.figsize": (8, 6),
-    # slightly thicker lines by default are easier to see
-    "lines.linewidth": 3,
-    "image.cmap": "rho_viridia",
+    "lines.linewidth": 1.5,
+    "image.cmap": "rho_sequential",
 }
 
 
@@ -102,33 +102,34 @@ def boxstyle(is_dark=None) -> dict:
 
     return opts
 
+def setup(is_dark: bool, setup=True, wrap_for_eval=True) -> Tuple[dict, List[str]]:
+    """Sets up Matplotlib according to the given color scheme and pyplot module. Returns the theme and colors as a tuple, setting the theme and colormaps.
 
-def unfill_boxplot(ax=None) -> None:
-    """Inverts boxplot colors so the borders are the color being plotted and the inner box is empty. Modifies an axis in-place.
-    If no axis is given, defaults to current axis."""
-
-    if ax is None:
-        import matplotlib.pyplot as plt
-
-        ax = plt.gca()
-
-    for patch in ax.patches:
-        patch.set(ec=patch.get_fc())
-        patch.set(fill=False)
-
-    for i in range(len(ax.lines) // 6):
-        (whis1, whis2, cap1, cap2, median, dunno) = ax.lines[i * 6 : i * 6 + 6]
-        for l in (whis1, whis2, cap1, cap2, median):
-            l.set_color(ax.patches[i].get_ec())
-
-
-def setup(is_dark: bool, setup=True) -> Tuple[dict, List[str]]:
-    """Sets up Matplotlib according to the given color scheme and pyplot module. Returns the theme and colors as a tuple, setting the theme and colormaps."""
+    If wrap_for_eval, decorates plotting functions to accept expressions using columns instead of just column names
+    in e.g., plt.plot and plt.scatter. Has no effect if setup is False."""
     theme = rho_dark if is_dark else rho_light
     colors = DARK_COLORS if is_dark else LIGHT_COLORS
+    SEQUENTIAL = setup_cmap_aliases(is_dark)
     if setup:
         import matplotlib as mpl
         import matplotlib.pyplot as plt
+        import seaborn as sns
+
+        if wrap_for_eval:
+            decorate_all(plt)
+            decorate_all(mpl.axes.Axes)
+            decorate_all(sns)
+
+            @wraps(sns.boxplot)
+            def wrapped_boxplot(*args, **kwargs):
+                """Wraps sns.boxplot to work in both dark and light mode."""
+                box_kwargs = boxstyle(is_dark)
+                box_kwargs.update(kwargs)
+                out = sns.boxplot(*args, **box_kwargs)
+                return out
+
+            sns.rp_boxplot = wrapped_boxplot
+
 
         if "xtick.labelcolor" not in plt.rcParams.keys():
             # starting from matplotlib 3.4.0, you can set the label color differently from the ticks
@@ -147,19 +148,19 @@ def setup(is_dark: bool, setup=True) -> Tuple[dict, List[str]]:
             color=[x[1:] for x in colors]
         )
 
+        for alias in ALIASES:
+            # these change from light to dark mode, so we need to force Matplotlib to reassign them
+            mpl.colormaps.unregister('rho_' + alias)
+            mpl.colormaps.unregister('rho_' + alias + '_r')
+
         for name, palette in SEQUENTIAL.items():
             if not isinstance(palette, SequentialPalette):
                 continue
             cmap = palette.as_mpl_cmap()
-            try:
-                plt.get_cmap("rho_" + name)
-            except ValueError:
-                plt.register_cmap(name="rho_" + name, cmap=cmap)
 
-            try:
-                plt.get_cmap("rho_" + name + "_r")
-            except ValueError:
-                plt.register_cmap(name="rho_" + name + "_r", cmap=cmap.reversed())
+            if ('rho_' + name) not in mpl.colormaps:
+                mpl.colormaps.register(cmap, name='rho_' + name, force=True)
+                mpl.colormaps.register(cmap.reversed(), name='rho_' + name + '_r', force=True)
 
         # https://github.com/ipython/ipykernel/issues/267
 

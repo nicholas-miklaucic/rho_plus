@@ -4,7 +4,7 @@
 import rho_plus
 import matplotlib.pyplot as plt
 from bokeh.themes import Theme
-
+from .util import decorate_all
 themes = []
 for is_dark in (True, False):
     _theme, cs = rho_plus.mpl_setup(is_dark)
@@ -13,7 +13,7 @@ for is_dark in (True, False):
     font = "'Source Sans 3', sans-serif"
     json = {
         "attrs": {
-            "Figure": {
+            "figure": {
                 "background_fill_color": theme["figure.facecolor"],
                 "border_fill_color": theme["figure.facecolor"],
                 # spine of axis

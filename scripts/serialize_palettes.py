@@ -13,24 +13,63 @@ from pathlib import Path
 print("Serializing color palettes...")
 
 # aesthetic colormaps: sacrifice resolution for harmony
-solara = OklchPalette("solara", [(0.45, 0.2, 310), (0.75, 0.05, 120)], [True])
 frutta = OklchPalette("frutta", [(0.45, 0.23, 312), (0.8, 0.14, 60)], [True])
 glacia = OklchPalette("glacia", [(0.35, 0.15, 240), (0.65, 0.15, 140)], [False])
 ignia = OklchPalette("ignia", [(0.4, 0.2, 35), (0.75, 0.2, 85)], [True])
 
 # linear colormaps: workhorses for representing continuous ordinal data
 # vetted for use in scatterplots against dark or light backgrounds
-inferna = OklchPalette("inferna", [(0.34, 0.2, 260), (0.8, 0.2, 100)], [True])
-viridia = OklchPalette("viridia", [(0.34, 0.15, 300), (0.8, 0.15, 100)], [False])
+inferna = OklchPalette("inferna", [(0.34, 0.2, 260), (0.57, 0.15, 10), (0.8, 0.2, 100)], [True, True], correct=True)
+viridia = OklchPalette("viridia", [(0.34, 0.13, 300), (0.57, 0.08, 200), (0.8, 0.13, 100)], [False, False])
 
 # spans a very large range of luminances: useful for heatmaps/as background
 umbra = OklchPalette(
-    "umbra", [[0.15, 0.089, 265], [0.565, 0.2, 318], [0.98, 0.089, 111]], [True, True]
+    "umbra", [[0.02, 0.08, 265], [0.4, 0.2, 318], [0.98, 0.089, 111]], [True, True]
 )
 
 gouldia = OklchPalette(
-    "gouldia", [[0.16, 0.1, 300], [0.57, 0.2, 180], [0.98, 0.1, 60]], [False]
+    "gouldia", [[0.02, 0.08, 290], [0.5, 0.2, 180], [0.98, 0.05, 60]], [False], correct='cam16'
 )
+
+# less drastic choices for heatmaps/choropleths
+lava = OklchPalette(
+    'lava',
+    [
+        (0.95, 0.08, 115),
+        (0.58, 0.16, 350),
+        (0.2, 0.15, 280)
+    ],
+    (False, False,), correct='cam16')
+
+candela = OklchPalette(
+    'candela',
+    [
+        (0.15, 0.08, 280),
+        (0.5, 0.13, 0),
+        (0.85, 0.15, 80),
+        (0.92, 0.1, 115),
+    ],
+    (True, True, True), correct='cam16')
+
+
+
+aquaria = OklchPalette(
+    'aquaria',
+    [
+        (0.23, 0.05, 315),
+        (0.9, 0.1, 155),
+        (0.95, 0.15, 140),
+    ],
+    (False,False), correct='cam16')
+
+cabana = OklchPalette(
+        'cabana',
+    [
+        (0.95, 0.05, 115),
+        (0.7, 0.15, 135),
+        (0.2, 0.1, 280)
+    ],
+    (True, True,), correct='cam16')
 
 # diverging colormaps
 div_spectra = OklchPalette(
@@ -80,6 +119,7 @@ iso_spectra = OklchPalette(
 )
 iso_glacia = OklchPalette("iso_glacia", [(0.55, 0.1, 260), (0.55, 0.1, 130)], [False])
 iso_frutta = OklchPalette("iso_frutta", [(0.65, 0.2, 312), (0.65, 0.2, 40)], [True])
+
 
 
 # rainbow, because everyone needs one

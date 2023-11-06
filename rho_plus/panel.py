@@ -12,7 +12,7 @@ from .util import is_curr_dark_bokeh
 def datagrid(df):
     """Renders a DataFrame as an interactive data grid using Perspective.
     Intelligently picks the color theme to use based on the current Matplotlib theme."""
-    persp_theme = "material-dense-dark" if is_curr_dark_bokeh() else "material-dense"
+    persp_theme = "material-dark" if is_curr_dark_bokeh() else "material"
 
     return pn.pane.Perspective(df, theme=persp_theme, sizing_mode="stretch_width")
 
@@ -34,7 +34,7 @@ def show_json(obj):
             hover_preview=True,
         ),
         sizing_mode="stretch_width",
-        background="#1E1E1E" if json_theme == "dark" else "#FFFFFF",
+        styles=dict(background="#1E1E1E" if json_theme == "dark" else "#FFFFFF"),
         scroll=True,
     )
 

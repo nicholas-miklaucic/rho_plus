@@ -6,6 +6,72 @@ from typing import Iterable, Union
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors as mpl_colors
+import inspect
+
+from functools import wraps
+
+DATA_KW_NAMES = ['data', 'data_frame']
+def allow_expression_column(func):
+    """Wraps matplotlib/seaborn/plotly functions to allow expressions instead of just column names."""
+    @wraps(func)
+    def wrap(*args, **kwargs):
+        new_kwargs = kwargs.copy()
+        data = None
+        data_arg_type = None
+        for name in DATA_KW_NAMES:
+            if name in kwargs and kwargs[name] is not None:
+                data = kwargs[name]
+                del new_kwargs[name]
+                data_arg_type = name
+
+        new_args = args
+        if data is None and args:
+            data = args[0]
+            new_args = new_args[1:]
+            data_arg_type = 'positional'
+
+        if data is None or not all(hasattr(data, attr) for attr in ('assign', 'columns')):
+            # data argument wasn't passed in, just pass to inner function unchanged
+            return func(*args, **kwargs)
+
+        exprs = []
+        def is_expression(arg):
+            if not isinstance(arg, str):
+                return False
+
+            has_column = any(col in arg for col in data.columns)
+            is_not_column = arg not in data.columns
+            return has_column and is_not_column
+        for arg in new_args:
+            if is_expression(arg):
+                exprs.append(arg)
+        for kwarg in new_kwargs.values():
+            if is_expression(kwarg):
+                exprs.append(kwarg)
+
+        assignments = {expr: data.eval(expr) for expr in exprs}
+        if data_arg_type == 'positional':
+            new_args = [data.assign(**assignments), *new_args]
+        else:
+            new_kwargs[data_arg_type] = data.assign(**assignments)
+        return func(*new_args, **new_kwargs)
+
+    return wrap
+
+
+def decorate_all(module):
+    """Wraps any function in a module that supports data or data_frame arguments
+    to support expressions."""
+    # never change, Python
+    for attr in dir(module):
+        fun = getattr(module, attr)
+        try:
+            sig = inspect.signature(fun)
+            if any(arg in sig.parameters for arg in DATA_KW_NAMES):
+                setattr(module, attr, allow_expression_column(fun))
+        except (TypeError, ValueError):
+            # not a function, or can't get signature
+            pass
 
 
 def pd_unique(arr):
@@ -24,7 +90,7 @@ def is_curr_dark_bokeh():
     import holoviews as hv
 
     try:
-        bgcolor = hv.renderer("bokeh").theme._json["attrs"]["Figure"][
+        bgcolor = hv.renderer("bokeh").theme._json["attrs"]["figure"][
             "background_fill_color"
         ]
     except NameError as e:
