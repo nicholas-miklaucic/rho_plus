@@ -1,0 +1,15 @@
+site_name: Rho+
+site_author: Nicholas Miklaucic
+site_description: Documentation for Rho+, a toolkit for building beautiful Python plots
+nav:
+    - Introduction: source/introduction.ipynb
+    - User Guide: source/user_guide.ipynb
+    - Choosing Colormaps For Numbers: source/quantitative_colormaps.ipynb
+plugins:
+    - mkdocs-jupyter
+
+
+theme:
+    name: material
+    palette:
+        scheme: default

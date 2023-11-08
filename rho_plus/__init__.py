@@ -1,6 +1,7 @@
 from .matplotlib import setup as mpl_setup
 from .matplotlib import boxstyle as boxstyle
 from .matplotlib_tweaks import smart_ticks, line_labels, ylabel_top
+from .smoothing import smooth_straight_lines, smooth_noisy_lines
 from ._scatter_label import scatter_labels
 
 try:

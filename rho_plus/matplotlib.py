@@ -86,7 +86,7 @@ def boxstyle(is_dark=None) -> dict:
         fg = plt.rcParams["xtick.labelcolor"]
     else:
         empty, _lightest, _light, _medium, dark, _darkest = (
-            DARK_SHADES if rho_dark else LIGHT_SHADES
+            DARK_SHADES if is_dark else LIGHT_SHADES
         )
         bg = empty
         fg = dark
@@ -94,10 +94,10 @@ def boxstyle(is_dark=None) -> dict:
     lw = 1.5
     opts = dict(
         medianprops={"color": bg, "lw": lw},
-        boxprops={"ec": bg, "lw": lw},
-        flierprops={"mfc": fg},
+        boxprops={'ec': bg, "lw": lw},
+        flierprops={"mfc": fg, 'mec': bg},
         whiskerprops={"color": fg, "lw": lw},
-        capprops={"color": fg, "lw": lw},
+        capprops={"mec": fg, 'color': fg, "lw": lw},
     )
 
     return opts
@@ -123,6 +123,10 @@ def setup(is_dark: bool, setup=True, wrap_for_eval=True) -> Tuple[dict, List[str
             @wraps(sns.boxplot)
             def wrapped_boxplot(*args, **kwargs):
                 """Wraps sns.boxplot to work in both dark and light mode."""
+                if 'fill' in kwargs and not kwargs['fill']:
+                    # nothing we're changing affects the unfilled plot
+                    return sns.boxplot(*args, **kwargs)
+
                 box_kwargs = boxstyle(is_dark)
                 box_kwargs.update(kwargs)
                 out = sns.boxplot(*args, **box_kwargs)
