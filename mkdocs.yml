@@ -1,4 +1,5 @@
 site_name: Rho+
+site_url: https://nicholas-miklaucic.github.io/rho_plus/source/introduction/
 site_author: Nicholas Miklaucic
 site_description: Documentation for Rho+, a toolkit for building beautiful Python plots
 nav:
